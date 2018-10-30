@@ -310,6 +310,44 @@ var EtherscanProvider = /** @class */ (function (_super) {
             });
         });
     };
+    EtherscanProvider.prototype.getERC20TransferHistory = function (addressOrName, contractAddress, resultsPerPage, page) {
+        var url = this.baseUrl;
+        var apiKey = '';
+        if (this.apiKey) {
+            apiKey += '&apikey=' + this.apiKey;
+        }
+        if (resultsPerPage == null) {
+            resultsPerPage = 100;
+        }
+        if (page == null) {
+            page = 1;
+        }
+        return this.resolveName(addressOrName).then(function (address) {
+            url += '/api?module=account&action=tokentx';
+            if (contractAddress != null) {
+                url += '&contractaddress=' + contractAddress;
+            }
+            url += '&address=' + address;
+            url += '&page=' + page;
+            url += '&offset=' + resultsPerPage;
+            url += '&sort=asc' + apiKey;
+            return web_1.fetchJson(url, null, getResult).then(function (result) {
+                var output = [];
+                result.forEach(function (tx) {
+                    var item = base_provider_1.BaseProvider.checkTransactionResponse(tx);
+                    if (tx.timeStamp) {
+                        item.timestamp = parseInt(tx.timeStamp);
+                    }
+                    item.tokenName = tx.tokenName;
+                    item.tokenSymbol = tx.tokenSymbol;
+                    item.tokenDecimal = tx.tokenDecimal;
+                    output.push(item);
+                });
+                return output;
+            });
+        });
+    };
+    ;
     return EtherscanProvider;
 }(base_provider_1.BaseProvider));
 exports.EtherscanProvider = EtherscanProvider;

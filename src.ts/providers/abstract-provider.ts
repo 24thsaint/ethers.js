@@ -94,6 +94,11 @@ export interface TransactionResponse extends Transaction {
     blockHash?: string,
     timestamp?: number,
 
+    // If a transaction is an ERC20 token transfer
+    tokenName?: string,
+    tokenSymbol?: string,
+    tokenDecimal?: number
+
     confirmations: number,
 
     // Not optional (as it is in Transaction)

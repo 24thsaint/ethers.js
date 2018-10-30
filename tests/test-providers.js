@@ -6,7 +6,7 @@ var Web3HttpProvider = require('web3-providers-http');
 var utils = require('./utils');
 var ethers = utils.getEthers(__filename);
 
-//var providers = ethers.providers;
+var providers = ethers.providers;
 var bigNumberify = ethers.utils.bigNumberify;
 var getAddress = ethers.utils.getAddress;
 
@@ -397,10 +397,10 @@ function getDefaults(network, extra) {
     return result;
 }
 */
-/*
-describe('Test extra Etherscan operations', function() {
-    var provider = new providers.EtherscanProvider();
-    it('fethces the current price of ether', function() {
+
+describe.only('Test extra Etherscan operations', function() {
+    var provider = new providers.EtherscanProvider('homestead', 'GQPRQYTE5QG8ET71ZSYJEQ2MBA1CY3VMEK');
+    it('fetches the current price of ether', function() {
         this.timeout(20000);
         return provider.getEtherPrice().then(function(price) {
             assert.ok(typeof(price) === 'number', 'Etherscan price returns a number');
@@ -411,11 +411,20 @@ describe('Test extra Etherscan operations', function() {
         this.timeout(100000);
         return provider.getHistory('ricmoo.firefly.eth').then(function(history) {
             assert.ok(history.length > 40, 'Etherscan history returns results');
-            assert.equal(history[0].hash, '0xd25f550cfdff90c086a6496a84dbb2c4577df15b1416e5b3319a3e4ebb5b25d8', 'Etherscan history returns correct transaction');
+            assert.equal(history[0].hash, '0x189f67df9fbdc54dbf03077540e4e4df07a01d0b35c52a7ff816dbbda7c99b74', 'Etherscan history returns correct transaction');
         });
     });
+    it('fetches the ERC20 token transfer history', function() {
+        this.timeout(100000)
+        return provider.getERC20TransferHistory('ricmoo.firefly.eth').then(function(history) {
+            var tx = history[0]
+            var keys = Object.keys(tx)
+            assert.equal(tx.hash, '0xdec8fccde888d8393e32a6671374d1b5910913d4e2e3d45ac4182b3f0bf0ced6')
+            assert.equal(keys.includes('tokenName'), true)
+        })
+    })
 });
-*/
+
 describe('Test Basic Authentication', function() {
     // https://stackoverflow.com/questions/6509278/authentication-test-servers#16756383
 

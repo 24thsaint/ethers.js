@@ -317,4 +317,40 @@ export class EtherscanProvider extends BaseProvider{
             });
         });
     }
+
+    getERC20TransferHistory(addressOrName: string | Promise<string>, contractAddress?: string, resultsPerPage?: number, page?: number) : Promise<Array<TransactionResponse>> {
+        var url = this.baseUrl;
+        var apiKey = '';
+        if (this.apiKey) {
+            apiKey += '&apikey=' + this.apiKey;
+        }
+        if (resultsPerPage == null) {
+            resultsPerPage = 100;
+        }
+        if (page == null) {
+            page = 1;
+        }
+        return this.resolveName(addressOrName).then(function (address) {
+            url += '/api?module=account&action=tokentx'
+            if (contractAddress != null) {
+                url += '&contractaddress=' + contractAddress
+            }
+            url += '&address=' + address;
+            url += '&page=' + page;
+            url += '&offset=' + resultsPerPage;
+            url += '&sort=asc' + apiKey;
+            return fetchJson(url, null, getResult).then((result: Array<any>) => {
+                var output: Array<TransactionResponse> = [];
+                result.forEach((tx) => {
+                    let item = BaseProvider.checkTransactionResponse(tx);
+                    if (tx.timeStamp) { item.timestamp = parseInt(tx.timeStamp); }
+                    item.tokenName = tx.tokenName
+                    item.tokenSymbol = tx.tokenSymbol
+                    item.tokenDecimal = tx.tokenDecimal
+                    output.push(item);
+                });
+                return output;
+            });
+        });
+    };
 }
